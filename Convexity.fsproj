@@ -20,6 +20,7 @@
   
   <ItemGroup>
     <ProjectReference Include="Algs.Core\Algs.Core.fsproj" />
+    <ProjectReference Include="Algs.Test\Algs.Test.fsproj" />
   </ItemGroup>
 
 </Project>

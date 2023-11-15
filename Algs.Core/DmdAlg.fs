@@ -126,8 +126,9 @@ module Dmd =
         let b = phi.Solve(u0.ToComplex()) // Todo - this is inefficient there are better solutions for computing the modes.
 
         let A =
-            omega
-            |> Vector.map (fun x -> exp (x * Complex(float dt, 0.0)))
+            let x = omega * Complex(float dt, 0.0)
+
+            x.PointwiseExp()
             |> DenseMatrix.ofDiag
 
         (phi * A * b).Real()
