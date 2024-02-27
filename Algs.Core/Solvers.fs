@@ -6,6 +6,16 @@ open MathNet.Numerics.LinearAlgebra.Double
 
 open Matrix.Extensions
 
+module Internal =
+    let smallIndicies (X: float Matrix) lambda =
+        [| for row in X.EnumerateRows() -> [| for elem in row -> if abs (elem) < lambda then true else false |] |]
+
+    let pointWiseNot elems =
+        [| for x in elems -> [| for y in x -> if y = true then false else true |] |]
+
+    let enumerateColumns (X: bool array array) =
+        [| for ii in 0 .. X[0].Length - 1 -> [| for row in X -> row[ii] |] |]
+
 /// The Sequential Threshold Least Squares algorithm.
 ///
 /// numIters: Number of times to regress terms.
@@ -16,23 +26,22 @@ open Matrix.Extensions
 /// Algorithm adapted from:
 /// https://arxiv.org/pdf/1509.03580.pdf.
 let stlsq numIters lambda (A: DenseMatrix) (B: DenseMatrix) =
-    let allRows = Seq.replicate A.RowCount 1 |> vector
+    let allRows = Array.replicate A.RowCount true
     let mutable (Xi: DenseMatrix) = DenseMatrix.OfMatrix(A.Solve(B))
 
-    do
-        for _ in 1..numIters do
+    for _ in 1..numIters do
 
-            // Truncate small values toward zero
-            let mutable smallIndices = Xi.PointwiseAbsLessThan lambda
-            Xi[smallIndices] <- 0.0
+        // Truncate small values toward zero
+        let mutable smallIndices = Internal.smallIndicies Xi lambda
+        Xi[smallIndices] <- 0.0
 
-            // Regress dynamics onto remaining terms to find sparse Xi
-            let activeIndices = DenseMatrix.PointwiseNot smallIndices
+        // Regress dynamics onto remaining terms to find sparse Xi
+        let activeIndices = Internal.pointWiseNot smallIndices
 
-            for (colIndex, bigInds) in activeIndices.EnumerateColumns() |> Seq.indexed do
-                let Sq = A[allRows, bigInds]
-                let neSol = Sq.Solve(B[*, colIndex])
-                Xi[bigInds, colIndex] <- neSol
+        for (colIndex, bigInds) in activeIndices |> Internal.enumerateColumns |> Seq.indexed do
+            let Sq = A[allRows, bigInds]
+            let neSol = Sq.Solve(B[*, colIndex])
+            Xi[bigInds, colIndex] <- neSol
 
     Xi
 
