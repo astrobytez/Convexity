@@ -59,7 +59,7 @@ let stlsq numIters lambda (A: DenseMatrix) (B: DenseMatrix) =
 ///
 /// Adapted from:
 /// https://arxiv.org/ftp/arxiv/papers/2208/2208.11544.pdf
-let lasso (A: Matrix<float>) (y: Vector<float>) (lambda: float) (rho: float) (alpha: float) absTol relTol maxIters =
+let lasso (lambda: float) (rho: float) (alpha: float) absTol relTol maxIters (A: Matrix<float>) (y: Vector<float>) =
     let n = A.RowCount
     let m = A.ColumnCount
     let I = CreateMatrix.DenseIdentity m
