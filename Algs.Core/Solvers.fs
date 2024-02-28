@@ -6,7 +6,7 @@ open MathNet.Numerics.LinearAlgebra.Double
 
 open Matrix.Extensions
 
-module Internal =
+module private Internal =
     let smallIndicies (X: float Matrix) lambda =
         [| for row in X.EnumerateRows() -> [| for elem in row -> if abs (elem) < lambda then true else false |] |]
 
