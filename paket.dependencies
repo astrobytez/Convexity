@@ -1,0 +1,11 @@
+source https://www.nuget.org/api/v2
+
+nuget FSharp.Core
+nuget coverlet.collector 3.1.2
+nuget MathNet.Numerics >= 4.0
+nuget MathNet.Numerics.FSharp >= 4.0
+nuget Microsoft.NET.Test.Sdk 17.3.2
+nuget NUnit 3.13.3
+nuget NUnit.Analyzers 3.3.0
+nuget NUnit3TestAdapter 4.2.1
+nuget Plotly.NET 4.2.0
